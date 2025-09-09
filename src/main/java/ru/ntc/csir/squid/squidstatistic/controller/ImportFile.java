@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import ru.ntc.csir.squid.squidstatistic.dto.ResultImport;
 import ru.ntc.csir.squid.squidstatistic.service.ImportAccessLog;
 
 import java.io.IOException;
@@ -21,8 +22,8 @@ public class ImportFile {
             return "Please select a file to upload.";
         }
 
-        importAccessLog.addLog(file.getInputStream(),(short)1);
-        return "File uploaded successfully: " + file.getOriginalFilename();
+        ResultImport ri = importAccessLog.addLog(file.getInputStream(),(short)1);
+        return "File uploaded successfully: " + file.getOriginalFilename() + " CountProcessed:" + ri.getCountProcessed();
     }
 }
 

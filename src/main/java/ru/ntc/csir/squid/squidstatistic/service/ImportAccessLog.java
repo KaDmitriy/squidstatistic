@@ -2,6 +2,7 @@ package ru.ntc.csir.squid.squidstatistic.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.ntc.csir.squid.squidstatistic.dto.ResultImport;
 import ru.ntc.csir.squid.squidstatistic.model.*;
 import ru.ntc.csir.squid.squidstatistic.repository.*;
 
@@ -49,15 +50,24 @@ public class ImportAccessLog {
     @Autowired
     AccessRepository accessRepository;
 
-    public void addLog(InputStream is, Short node){
+    private Access lastAccess;
+
+    public ResultImport addLog(InputStream is, Short node){
+
+        lastAccess = accessRepository.getLastInNode(node);
+        int countProcessed = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                parsing(line, node);
+                Access currentAccess = parsing(line, node);
+                if(currentAccess == null) break;
+                countProcessed++;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return new ResultImport(0, countProcessed);
     }
 
     /**
@@ -89,7 +99,7 @@ public class ImportAccessLog {
         Short hierarchyCodeID = resultHierarchyCodeID(hierarchyCode[0]);
         Short contentTypeID = resultContentType(contentType);
 
-        return accessRepository.save(new Access(node,
+        var access = new Access(node,
                 datetime,
                 duration,
                 clientAddress,
@@ -103,7 +113,11 @@ public class ImportAccessLog {
                 hierarchyCodeID,
                 hierarchyCode[1],
                 contentTypeID
-                ));
+        );
+
+        if( lastAccess!=null && lastAccess.getDatetime().isAfter(access.getDatetime()) ) return null;
+
+        return accessRepository.save(access);
     }
 
     public Short resultCodeID(String code){
