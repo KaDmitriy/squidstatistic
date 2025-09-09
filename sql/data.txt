@@ -1,0 +1,19 @@
+INSERT INTO public.content_type ("id", "name") VALUES
+	 (0, '-');
+INSERT INTO public.content_type ("name") VALUES
+	 ('text/html');
+
+
+INSERT INTO public.hierarchy_code ("name") VALUES
+	 ('HIER_DIRECT'),
+	 ('HIER_NONE');
+
+INSERT INTO public.request_method ("name") VALUES
+	 ('CONNECT'),
+	 ('GET'),
+	 ('POST');
+
+INSERT INTO public.result_code ("name") VALUES
+	 ('TCP_MISS'),
+	 ('TCP_TUNNEL'),
+	 ('TCP_DENIED');
