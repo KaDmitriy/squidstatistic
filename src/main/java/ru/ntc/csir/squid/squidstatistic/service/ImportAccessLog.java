@@ -2,6 +2,7 @@ package ru.ntc.csir.squid.squidstatistic.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.ntc.csir.squid.squidstatistic.dto.ResultImport;
 import ru.ntc.csir.squid.squidstatistic.model.*;
 import ru.ntc.csir.squid.squidstatistic.repository.*;
@@ -30,28 +31,29 @@ public class ImportAccessLog {
     private ResultCodeRepository resultCodeRepository;
 
     @Autowired
-    List<RequestMethod> listRequestMethod;
+    private List<RequestMethod> listRequestMethod;
 
     @Autowired
     private RequestMethodRepository requestMethodRepository;
 
     @Autowired
-    List<HierarchyCode> listHierarchyCode;
+    private List<HierarchyCode> listHierarchyCode;
 
     @Autowired
-    HierarchyCodeRepository hierarchyCodeRepository;
+    private HierarchyCodeRepository hierarchyCodeRepository;
 
     @Autowired
-    List<ContentType> listContentType;
+    private List<ContentType> listContentType;
 
     @Autowired
-    ContentTypeRepository contentTypeRepository;
+    private ContentTypeRepository contentTypeRepository;
 
     @Autowired
-    AccessRepository accessRepository;
+    private AccessRepository accessRepository;
 
     private Access lastAccess;
 
+    @Transactional
     public ResultImport addLog(InputStream is, Short node){
 
         lastAccess = accessRepository.getLastInNode(node);
@@ -62,8 +64,10 @@ public class ImportAccessLog {
                 Access currentAccess = parsing(line, node);
                 if(currentAccess == null) break;
                 countProcessed++;
+
             }
         } catch (IOException e) {
+            System.out.println(">>> countProcessed : " + countProcessed);
             e.printStackTrace();
         }
 
@@ -88,8 +92,15 @@ public class ImportAccessLog {
         String requestMethod = values[5];
         String[] url = values[6].split(":");
         int urlPort = 0;
-        if( url.length==3) urlPort = Integer.parseInt(url[2]);
-        if( url.length==2 && !url[0].equals("http")) urlPort = Integer.parseInt(url[1]);
+        if(url.length>1){
+            if(url.length==2 && url[1].matches("-?\\d+")) urlPort = Integer.parseInt(url[1]);
+            if(url.length==3 ){
+                var strs = url[2].split("/");
+                if(strs.length>1 && strs[0].matches("-?\\d+")) urlPort = Integer.parseInt(strs[0]);
+            }
+        }
+        String urlStr = values[6];
+        if(urlPort==443) urlStr = values[6].replaceAll(":urlPort", "");
         String user = values[7];
         String[] hierarchyCode = values[8].split("/");
         String contentType = values[9];
@@ -107,7 +118,7 @@ public class ImportAccessLog {
                 resultCodeNumber,
                 size,
                 requestMethodID,
-                url[0],
+                urlStr,
                 urlPort,
                 user,
                 hierarchyCodeID,
@@ -121,7 +132,7 @@ public class ImportAccessLog {
     }
 
     public Short resultCodeID(String code){
-        Short result = 0;
+        Short result = -1;
         if(!listResultCode.isEmpty()) {
             Optional<ResultCode> resultCode = listResultCode.stream().filter(rc -> rc.getName().equals(code)).findFirst();
             if (resultCode.isEmpty()) {
@@ -135,7 +146,7 @@ public class ImportAccessLog {
     }
 
     public Short resultRequestMethodID(String code){
-        Short result = 0;
+        Short result = -1;
         if(! listRequestMethod.isEmpty()){
             Optional<RequestMethod> requestMethod = listRequestMethod.stream().filter(rm -> rm.getName().equals(code)).findFirst();
             if(requestMethod.isEmpty()){
@@ -156,7 +167,7 @@ public class ImportAccessLog {
                 return dbHierarchyCode.getId();
             }else return hierarchyCode.get().getId();
         }
-        return 0;
+        return -1;
     }
 
     public Short resultContentType(String code){

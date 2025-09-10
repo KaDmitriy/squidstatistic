@@ -17,12 +17,12 @@ public class ImportFile {
     private ImportAccessLog importAccessLog;
 
     @PostMapping("/uploadaccess")
-    public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+    public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam Short node) throws IOException {
         if (file.isEmpty()) {
             return "Please select a file to upload.";
         }
-
-        ResultImport ri = importAccessLog.addLog(file.getInputStream(),(short)1);
+        if (node == null) return "Error request";
+        ResultImport ri = importAccessLog.addLog(file.getInputStream(),node);
         return "File uploaded successfully: " + file.getOriginalFilename() + " CountProcessed:" + ri.getCountProcessed();
     }
 }
