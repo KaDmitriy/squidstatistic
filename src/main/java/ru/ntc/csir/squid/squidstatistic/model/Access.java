@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.net.InetAddress;
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "access")
@@ -11,13 +12,16 @@ public class Access {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "node_id")
     private Short nodeId;
 
     @Column(name = "datetime")
     private Instant datetime;
+
+    @Column(name = "date")
+    private LocalDate date;
 
     @Column(name = "duration")
     private Integer duration;
@@ -32,7 +36,7 @@ public class Access {
     private Short resultCodeVal;
 
     @Column(name = "size")
-    private Integer size;
+    private Long size;
 
     @Column(name = "request_method_id")
     private Short requestMethodId;
@@ -58,9 +62,10 @@ public class Access {
     public Access() {
     }
 
-    public Access(Short nodeId, Instant datetime, Integer duration, InetAddress clientAddress, Short resultCodeId, Short resultCodeVal, Integer size, Short requestMethodId, String urlName, Integer urlPort, String user, Short hierarchyCodeId, String hierarchyCodeVal, Short typeId) {
+    public Access(Short nodeId, Instant datetime, LocalDate date, Integer duration, InetAddress clientAddress, Short resultCodeId, Short resultCodeVal, Long size, Short requestMethodId, String urlName, Integer urlPort, String user, Short hierarchyCodeId, String hierarchyCodeVal, Short typeId) {
         this.nodeId = nodeId;
         this.datetime = datetime;
+        this.date = date;
         this.duration = duration;
         this.clientAddress = clientAddress;
         this.resultCodeId = resultCodeId;
@@ -75,11 +80,11 @@ public class Access {
         this.typeId = typeId;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -131,11 +136,11 @@ public class Access {
         this.resultCodeVal = resultCodeVal;
     }
 
-    public Integer getSize() {
+    public Long getSize() {
         return size;
     }
 
-    public void setSize(Integer size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 
@@ -193,6 +198,14 @@ public class Access {
 
     public void setTypeId(Short typeId) {
         this.typeId = typeId;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
 }

@@ -1,5 +1,7 @@
 package ru.ntc.csir.squid.squidstatistic.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +15,8 @@ import java.io.IOException;
 @RestController
 public class ImportFile {
 
+    Logger log = LoggerFactory.getLogger(ImportFile.class);
+
     @Autowired
     private ImportAccessLog importAccessLog;
 
@@ -22,6 +26,7 @@ public class ImportFile {
             return "Please select a file to upload.";
         }
         if (node == null) return "Error request";
+        log.info("Begin add log");
         ResultImport ri = importAccessLog.addLog(file.getInputStream(),node);
         return "File uploaded successfully: " + file.getOriginalFilename() + " CountProcessed:" + ri.getCountProcessed();
     }

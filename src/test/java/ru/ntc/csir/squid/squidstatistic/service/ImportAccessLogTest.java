@@ -1,12 +1,8 @@
 package ru.ntc.csir.squid.squidstatistic.service;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import ru.ntc.csir.squid.squidstatistic.model.Access;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +47,10 @@ class ImportAccessLogTest {
                 }
             }
             assertEquals(url1StrRes[i], urlPort);
+
+            System.out.println(Integer.MAX_VALUE);
+            System.out.println(Long.MAX_VALUE);
+
             //if( url.length==3) urlPort = Integer.parseInt(url[2]);
             //if( url.length==2 && !url[0].equals("http") && url[1].matches("-?\\d+")) urlPort = Integer.parseInt(url[1]);
         }

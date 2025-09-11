@@ -1,5 +1,7 @@
 package ru.ntc.csir.squid.squidstatistic.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,9 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +28,8 @@ import java.util.Optional;
 
 @Component
 public class ImportAccessLog {
+
+    Logger log = LoggerFactory.getLogger(ImportAccessLog.class);
 
     @Autowired
     private List<ResultCode> listResultCode;
@@ -56,6 +63,7 @@ public class ImportAccessLog {
     @Transactional
     public ResultImport addLog(InputStream is, Short node){
 
+        long timeStart = System.currentTimeMillis();
         lastAccess = accessRepository.getLastInNode(node);
         int countProcessed = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
@@ -64,13 +72,13 @@ public class ImportAccessLog {
                 Access currentAccess = parsing(line, node);
                 if(currentAccess == null) break;
                 countProcessed++;
-
             }
         } catch (IOException e) {
-            System.out.println(">>> countProcessed : " + countProcessed);
+            log.error("End add log, countrow:{}", countProcessed);
             e.printStackTrace();
         }
-
+        log.info("End add log, countrow:{}", countProcessed);
+        log.info("Lead time:{} s", ((System.currentTimeMillis() - timeStart)/1000));
         return new ResultImport(0, countProcessed);
     }
 
@@ -84,11 +92,12 @@ public class ImportAccessLog {
 
         long datetimeUnixTimestampMillis = Long.parseLong( values[0].replace(".", "") );
         Instant datetime = Instant.ofEpochMilli(datetimeUnixTimestampMillis);
+        LocalDate date = LocalDate.ofInstant(datetime, ZoneId.of("UTC"));
         Integer duration = Integer.parseInt(values[1]);
         InetAddress clientAddress = InetAddress.getByName(values[2]);
         String[] resultcode = values[3].split("/");
         Short resultCodeNumber = Short.parseShort(resultcode[1]);
-        Integer size = Integer.parseInt(values[4]);
+        Long size = Long.parseLong(values[4]);
         String requestMethod = values[5];
         String[] url = values[6].split(":");
         int urlPort = 0;
@@ -112,6 +121,7 @@ public class ImportAccessLog {
 
         var access = new Access(node,
                 datetime,
+                date,
                 duration,
                 clientAddress,
                 resultCodeID,
@@ -126,7 +136,7 @@ public class ImportAccessLog {
                 contentTypeID
         );
 
-        if( lastAccess!=null && lastAccess.getDatetime().isAfter(access.getDatetime()) ) return null;
+       if( lastAccess!=null && lastAccess.getDatetime().isAfter(access.getDatetime()) ) return null;
 
         return accessRepository.save(access);
     }
