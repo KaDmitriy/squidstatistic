@@ -31,6 +31,9 @@ public class DataConfig {
     @Autowired
     private ContentTypeRepository contentTypeRepository;
 
+    @Autowired
+    private DomainRepository domainRepository;
+
     @Bean
     public List<Node> listNode(){
         return nodeRepository.findAll();
@@ -54,6 +57,11 @@ public class DataConfig {
     @Bean
     public List<ContentType> listContentType(){
         return contentTypeRepository.findAll();
+    }
+
+    @Bean
+    public List<Domain> listDomain(DomainRepository domainRepository) {
+        return domainRepository.findAll();
     }
 
 }

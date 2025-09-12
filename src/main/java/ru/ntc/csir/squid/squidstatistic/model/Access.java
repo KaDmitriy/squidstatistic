@@ -41,6 +41,9 @@ public class Access {
     @Column(name = "request_method_id")
     private Short requestMethodId;
 
+    @Column(name = "url_domain_id")
+    private Integer urlDomainID;
+
     @Column(name = "url_name", length = Integer.MAX_VALUE)
     private String urlName;
 
@@ -62,7 +65,7 @@ public class Access {
     public Access() {
     }
 
-    public Access(Short nodeId, Instant datetime, LocalDate date, Integer duration, InetAddress clientAddress, Short resultCodeId, Short resultCodeVal, Long size, Short requestMethodId, String urlName, Integer urlPort, String user, Short hierarchyCodeId, String hierarchyCodeVal, Short typeId) {
+    public Access(Short nodeId, Instant datetime, LocalDate date, Integer duration, InetAddress clientAddress, Short resultCodeId, Short resultCodeVal, Long size, Short requestMethodId, Integer urlDomainID, String urlName, Integer urlPort, String user, Short hierarchyCodeId, String hierarchyCodeVal, Short typeId) {
         this.nodeId = nodeId;
         this.datetime = datetime;
         this.date = date;
@@ -72,6 +75,7 @@ public class Access {
         this.resultCodeVal = resultCodeVal;
         this.size = size;
         this.requestMethodId = requestMethodId;
+        this.urlDomainID = urlDomainID;
         this.urlName = urlName;
         this.urlPort = urlPort;
         this.user = user;
@@ -142,6 +146,14 @@ public class Access {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public Integer getUrlDomain() {
+        return urlDomainID;
+    }
+
+    public void setUrlDomain(Integer urlDomainID) {
+        this.urlDomainID = urlDomainID;
     }
 
     public Short getRequestMethodId() {

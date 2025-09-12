@@ -18,7 +18,6 @@ import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +56,12 @@ public class ImportAccessLog {
 
     @Autowired
     private AccessRepository accessRepository;
+
+    @Autowired
+    private List<Domain> listDomain;
+
+    @Autowired
+    private DomainRepository domainRepository;
 
     private Access lastAccess;
 
@@ -99,15 +104,8 @@ public class ImportAccessLog {
         Short resultCodeNumber = Short.parseShort(resultcode[1]);
         Long size = Long.parseLong(values[4]);
         String requestMethod = values[5];
-        String[] url = values[6].split(":");
-        int urlPort = 0;
-        if(url.length>1){
-            if(url.length==2 && url[1].matches("-?\\d+")) urlPort = Integer.parseInt(url[1]);
-            if(url.length==3 ){
-                var strs = url[2].split("/");
-                if(strs.length>1 && strs[0].matches("-?\\d+")) urlPort = Integer.parseInt(strs[0]);
-            }
-        }
+        String urlDomain = LogParsingValue.getDomainName(values[6]);
+        int urlPort = LogParsingValue.getUrlPort(values[6]);
         String urlStr = values[6];
         if(urlPort==443) urlStr = values[6].replaceAll(":urlPort", "");
         String user = values[7];
@@ -118,6 +116,8 @@ public class ImportAccessLog {
         Short requestMethodID = resultRequestMethodID(requestMethod);
         Short hierarchyCodeID = resultHierarchyCodeID(hierarchyCode[0]);
         Short contentTypeID = resultContentType(contentType);
+        Integer resultDomainID = resultDomainId(urlDomain);
+
 
         var access = new Access(node,
                 datetime,
@@ -128,6 +128,7 @@ public class ImportAccessLog {
                 resultCodeNumber,
                 size,
                 requestMethodID,
+                resultDomainID,
                 urlStr,
                 urlPort,
                 user,
@@ -151,6 +152,11 @@ public class ImportAccessLog {
                 listResultCode.add(dbResultCode);
                 result = dbResultCode.getId();
             } else result = resultCode.get().getId();
+        } else {
+            ResultCode newResultCode = new ResultCode(code);
+            ResultCode dbResultCode = resultCodeRepository.save(newResultCode);
+            listResultCode.add(dbResultCode);
+            result = dbResultCode.getId();
         }
         return result;
     }
@@ -164,6 +170,10 @@ public class ImportAccessLog {
                 listRequestMethod.add(dbRequestMethod);
                 result = dbRequestMethod.getId();
             } else result = requestMethod.get().getId();
+        } else {
+            RequestMethod dbRequestMethod = requestMethodRepository.save(new RequestMethod(code));
+            listRequestMethod.add(dbRequestMethod);
+            result = dbRequestMethod.getId();
         }
         return result;
     }
@@ -176,8 +186,11 @@ public class ImportAccessLog {
                 listHierarchyCode.add(dbHierarchyCode);
                 return dbHierarchyCode.getId();
             }else return hierarchyCode.get().getId();
+        } else {
+            HierarchyCode dbHierarchyCode = hierarchyCodeRepository.save(new HierarchyCode(code));
+            listHierarchyCode.add(dbHierarchyCode);
+            return dbHierarchyCode.getId();
         }
-        return -1;
     }
 
     public Short resultContentType(String code){
@@ -188,8 +201,26 @@ public class ImportAccessLog {
                 listContentType.add(dbContentType);
                 return dbContentType.getId();
             } else return contentType.get().getId();
+        } else {
+            ContentType dbContentType = contentTypeRepository.save(new ContentType(code));
+            listContentType.add(dbContentType);
+            return dbContentType.getId();
         }
-        return 0;
+    }
+
+    public Integer resultDomainId(String domainName){
+        if(! listDomain.isEmpty()){
+            Optional<Domain> domainFind = listDomain.stream().filter(ct -> ct.getName().equals(domainName)).findFirst();
+            if(domainFind.isEmpty()){
+                Domain domainCreate = domainRepository.save(new Domain(domainName));
+                listDomain.add(domainCreate);
+                return domainCreate.getId();
+            } else return domainFind.get().getId();
+        } else {
+            Domain domainCreate = domainRepository.save(new Domain(domainName));
+            listDomain.add(domainCreate);
+            return domainCreate.getId();
+        }
     }
 
 }
