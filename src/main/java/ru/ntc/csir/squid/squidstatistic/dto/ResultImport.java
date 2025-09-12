@@ -3,11 +3,13 @@ package ru.ntc.csir.squid.squidstatistic.dto;
 public class ResultImport {
 
     private Integer countRow;
-    private Integer countProcessed;
+    private Integer sizefile;
+    private Integer addrows;
 
-    public ResultImport(Integer countRow, Integer countProcessed) {
+    public ResultImport(Integer countRow, Integer sizefile, Integer addrows) {
         this.countRow = countRow;
-        this.countProcessed = countProcessed;
+        this.sizefile = sizefile;
+        this.addrows = addrows;
     }
 
     public Integer getCountRow() {
@@ -18,11 +20,19 @@ public class ResultImport {
         this.countRow = countRow;
     }
 
-    public Integer getCountProcessed() {
-        return countProcessed;
+    public Integer getSizefile() {
+        return sizefile;
     }
 
-    public void setCountProcessed(Integer countProcessed) {
-        this.countProcessed = countProcessed;
+    public void setSizefile(Integer sizefile) {
+        this.sizefile = sizefile;
+    }
+
+    public Integer getAddrows() {
+        return addrows;
+    }
+
+    public void setAddrows(Integer addrows) {
+        this.addrows = addrows;
     }
 }

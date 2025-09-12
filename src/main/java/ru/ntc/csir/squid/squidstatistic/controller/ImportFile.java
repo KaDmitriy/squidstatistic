@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ru.ntc.csir.squid.squidstatistic.dto.ResultImport;
+import ru.ntc.csir.squid.squidstatistic.model.Lastupdate;
+import ru.ntc.csir.squid.squidstatistic.repository.LastupdateRepository;
 import ru.ntc.csir.squid.squidstatistic.service.ImportAccessLog;
 
 import java.io.IOException;
@@ -20,6 +22,9 @@ public class ImportFile {
     @Autowired
     private ImportAccessLog importAccessLog;
 
+    @Autowired
+    private LastupdateRepository lastupdateRepository;
+
     @PostMapping("/uploadaccess")
     public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam Short node) throws IOException {
         if (file.isEmpty()) {
@@ -27,8 +32,10 @@ public class ImportFile {
         }
         if (node == null) return "Error request";
         log.info("Begin add log");
-        ResultImport ri = importAccessLog.addLog(file.getInputStream(),node);
-        return "File uploaded successfully: " + file.getOriginalFilename() + " CountProcessed:" + ri.getCountProcessed();
+        Lastupdate lastUpdate = importAccessLog.addLog(file.getInputStream(),node);
+        lastUpdate.setSizeFile(file.getSize());
+        lastupdateRepository.save(lastUpdate);
+        return "File uploaded successfully: " + file.getOriginalFilename() + " addrow:" + lastUpdate.getAddRow();
     }
 }
 

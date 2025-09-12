@@ -26,7 +26,7 @@ public class LogParsingValue {
      * @return String domain level 2
      */
     static public String getDomainName(String value) {
-        String host = "";
+        String host = "-";
         URL uri;
         try {
             if(value.indexOf("http://")==-1) uri = new URL("http://"+value);
@@ -45,7 +45,7 @@ public class LogParsingValue {
                 }
             }
         } catch (MalformedURLException e) {
-            host = "";
+            host = "-";
             //throw new RuntimeException(e);
         }
         return host;

@@ -66,8 +66,9 @@ public class ImportAccessLog {
     private Access lastAccess;
 
     @Transactional
-    public ResultImport addLog(InputStream is, Short node){
+    public Lastupdate addLog(InputStream is, Short node){
 
+        Instant dateUpdate = Instant.now();
         long timeStart = System.currentTimeMillis();
         lastAccess = accessRepository.getLastInNode(node);
         int countProcessed = 0;
@@ -84,7 +85,7 @@ public class ImportAccessLog {
         }
         log.info("End add log, countrow:{}", countProcessed);
         log.info("Lead time:{} s", ((System.currentTimeMillis() - timeStart)/1000));
-        return new ResultImport(0, countProcessed);
+        return new Lastupdate(node, dateUpdate, 0L, countProcessed, ((Long)((System.currentTimeMillis() - timeStart)/1000)).intValue());
     }
 
     /**
