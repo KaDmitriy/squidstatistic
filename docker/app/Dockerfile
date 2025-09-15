@@ -1,6 +1,6 @@
-FROM nexus.csir.reb:8181/bellsoft/liberica-openjre-alpine:21-cds AS layers
+FROM bellsoft/liberica-openjre-alpine:21-cds AS layers
 WORKDIR /application
-COPY docker/*.jar app.jar
+COPY *.jar app.jar
 
 RUN adduser -S spring-user
 USER spring-user
