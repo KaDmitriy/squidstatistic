@@ -40,3 +40,4 @@ out/
 ### APP ###
 /uploads
 /amplicode.xml
+/docker/app/*.jar
