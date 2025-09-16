@@ -2,7 +2,7 @@ services:
   squiddb:
     container_name: squid-db
     restart: always
-    image: nexus.cs.r:8181/postgres:15.14
+    image: $IMG_DB
     ports:
       - "5432:5432"
     volumes:
@@ -24,6 +24,8 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
+      args:
+        IMG_JAVA: ${IMG_JAVA}
     restart: always
     depends_on:
       - squiddb

@@ -1,4 +1,6 @@
-FROM nexus.cs.r:8181/bellsoft/liberica-openjre-alpine:21-cds AS layers
+ARG IMG_JAVA
+
+FROM ${IMG_JAVA} AS layers
 WORKDIR /application
 COPY *.jar app.jar
 
