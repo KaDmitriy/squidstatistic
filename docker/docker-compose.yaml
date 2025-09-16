@@ -1,15 +1,13 @@
 services:
   squiddb:
-    image: postgres:15.14
     container_name: squid-db
-    restart: "no"
-    build:
-      context: ./db
-      dockerfile: Dockerfile
+    restart: always
+    image: nexus.cs.r:8181/postgres:15.14
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - squiddb_data:/var/lib/postgresql/data
+      - ./db/db.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -21,12 +19,12 @@ services:
       start_period: 10s
       retries: 5
   squidstatistic:
-    image: squid/squidstatistic:0.1
     container_name: squid-statistic
+    image: squid/squid-statistic:0.1
     build:
       context: ./app
       dockerfile: Dockerfile
-    restart: "no"
+    restart: always
     depends_on:
       - squiddb
     ports:
@@ -36,4 +34,4 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
 volumes:
-  postgres_data:
+  squiddb_data:

@@ -1,4 +1,4 @@
-FROM bellsoft/liberica-openjre-alpine:21-cds AS layers
+FROM nexus.cs.r:8181/bellsoft/liberica-openjre-alpine:21-cds AS layers
 WORKDIR /application
 COPY *.jar app.jar
 
