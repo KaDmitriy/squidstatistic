@@ -1,8 +1,4 @@
-Statictic SQUID
+<#include 't_hat.ftlh'>
+<h1 class="mt-4">Информация</h1>
 
-<form method="POST" enctype="multipart/form-data" action="/uploadaccess?node=1">
-    <table>
-        <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
-        <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
-    </table>
-</form>
+<#include 't_footer.ftlh'>

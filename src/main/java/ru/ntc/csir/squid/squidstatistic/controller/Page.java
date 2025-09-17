@@ -20,11 +20,24 @@ public class Page {
         return "index";
     }
 
+    @GetMapping("/day.html")
+    public String geyDay(){
+        return "day";
+    }
+
+    @GetMapping("/week.html")
+    public String geyWeek(){
+        return "week";
+    }
+
+    @GetMapping("/month.html")
+    public String geyMonth(){
+        return "month";
+    }
 
     @GetMapping("/listalllogs")
     public String geyListAllLogs(Model model){
         List<Access> accessList = accessRepository.findAll();
-
         //model.addAttribute("name", accessList.get(0));
         model.addAttribute("accessList", accessList);
         return "listalllogs";
