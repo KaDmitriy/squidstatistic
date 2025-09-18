@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,10 +73,21 @@ public class ImportAccessLog {
         int countProcessed = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
+            int initialCapacity = 1000;
+            List<Access> listAddAccess = new ArrayList<Access>(initialCapacity);
             while ((line = reader.readLine()) != null) {
                 Access currentAccess = parsing(line, node);
                 if(currentAccess == null) break;
+                listAddAccess.add(currentAccess);
+                if(listAddAccess.size()==initialCapacity){
+                    accessRepository.saveAll(listAddAccess);
+                    listAddAccess.clear();
+                }
                 countProcessed++;
+            }
+            if(listAddAccess.size()>0){
+                accessRepository.saveAll(listAddAccess);
+                listAddAccess.clear();
             }
         } catch (IOException e) {
             log.error("End add log, countrow:{}", countProcessed);
@@ -138,7 +150,7 @@ public class ImportAccessLog {
 
        if( lastAccess!=null && lastAccess.getDatetime().isAfter(access.getDatetime()) ) return null;
 
-        return accessRepository.save(access);
+        return access;
     }
 
     public Short resultCodeID(String code){
