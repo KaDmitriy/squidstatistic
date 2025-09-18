@@ -65,7 +65,6 @@ public class ImportAccessLog {
 
     private Access lastAccess;
 
-    @Transactional
     public Lastupdate addLog(InputStream is, Short node){
         Instant dateUpdate = Instant.now();
         long timeStart = System.currentTimeMillis();
