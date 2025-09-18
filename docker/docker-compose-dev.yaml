@@ -4,18 +4,14 @@ services:
     restart: always
     image: $IMG_DB
     ports:
-      - 5445:5445
-    expose:
-          - "5445"
+      - "5432:5432"
     volumes:
       - squiddb_data:/var/lib/postgresql/data
       - ./db/db.sql:/docker-entrypoint-initdb.d/init.sql
-    command: -p 5445
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: squid
-      TZ: Europe/Moscow
     healthcheck:
       test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
       interval: 10s
@@ -24,16 +20,20 @@ services:
       retries: 5
   squidstatistic:
     container_name: squid-statistic
-    image: $IMG_SQUIDSTAT
+    image: squid/squid-statistic:0.2
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      args:
+        IMG_JAVA: ${IMG_JAVA}
     restart: always
-    ports:
-      - 9007:9007
     depends_on:
       - squiddb
+    ports:
+      - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://squiddb:5445/squid
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://squiddb:5432/squid
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - TZ=Europe/Moscow
 volumes:
   squiddb_data:

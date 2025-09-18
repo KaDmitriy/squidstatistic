@@ -98,3 +98,18 @@ CREATE TABLE public.result_code (
 	CONSTRAINT result_code_pk PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX result_code_name_idx ON public.result_code USING btree (name);
+
+--
+-- Insert init data
+
+INSERT INTO public.content_type ("id", "name") VALUES (0, '-');
+
+INSERT INTO public."domain" ("id", "name") VALUES	 (0, '-');
+
+INSERT INTO public.hierarchy_code ("id", "name") VALUES	 (0, '-');
+
+INSERT INTO public.request_method ("id", "name") VALUES (0, '-');
+
+INSERT INTO public.result_code ("id", "name") VALUES (0, '-');
+
+INSERT INTO public.node ("name") VALUES ('Конструкторов'), ('Лебедева');
