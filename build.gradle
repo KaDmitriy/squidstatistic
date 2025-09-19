@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ru.ntc.csir.squid'
-version = '0.2.1'
+version = '0.3'
 description = 'Demo project for Spring Boot'
 
 java {
@@ -35,7 +35,7 @@ tasks.named('test') {
 
 bootJar.doFirst {
 	//version
-	File propsFile = new File("${layout.buildDirectory}/classes/java/main/ru/ntc/csir/squid/squidstatistic/config/info")
+	File propsFile = new File("${buildDir}/classes/java/main/ru/ntc/csir/squid/squidstatistic/configure/info")
 	Properties props = new Properties()
 	props.setProperty('app.version', version)
 	props.store(propsFile.newWriter(), null)
