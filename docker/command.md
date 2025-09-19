@@ -1,7 +1,5 @@
-docker compose down -v
-docker stop squid-db
-docker rm squid-db
-docker rm squid-statistic
+docker compose -f docker-compose-dev.yaml up
+docker compose -f docker-compose-dev.yaml down -v
 
 docker compose -f docker-compose-dev.yaml  build
 docker login -u <USERNAME> -p <PASSWORD> nexus.csir.reb:8282

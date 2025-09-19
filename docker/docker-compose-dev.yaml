@@ -38,6 +38,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://squiddb:5432/squid
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - SQUIDSTATICTIC_COUNTROWSAVE=200
       - TZ=Europe/Moscow
 volumes:
   squiddb_data:
