@@ -71,6 +71,7 @@ public class ImportAccessLog {
         long timeStart = System.currentTimeMillis();
         lastAccess = accessRepository.getLastInNode(node);
         int countProcessed = 0;
+        int countSave = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
             int initialCapacity = 1000;
@@ -82,18 +83,20 @@ public class ImportAccessLog {
                 if(listAddAccess.size()==initialCapacity){
                     accessRepository.saveAll(listAddAccess);
                     listAddAccess.clear();
+                    countSave++;
                 }
                 countProcessed++;
             }
             if(listAddAccess.size()>0){
                 accessRepository.saveAll(listAddAccess);
                 listAddAccess.clear();
+                countSave++;
             }
         } catch (IOException e) {
             log.error("End add log, countrow:{}", countProcessed);
             e.printStackTrace();
         }
-        log.info("End add log, countrow:{}", countProcessed);
+        log.info("End add log, countrow:{}; countsave:{}", countProcessed, countSave);
         log.info("Lead time:{} s", ((System.currentTimeMillis() - timeStart)/1000));
         return new Lastupdate(node, dateUpdate, 0L, countProcessed, ((Long)((System.currentTimeMillis() - timeStart)/1000)).intValue());
     }
