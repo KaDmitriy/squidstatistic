@@ -3,6 +3,7 @@ package ru.ntc.csir.squid.squidstatistic.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ntc.csir.squid.squidstatistic.dto.ResultImport;
@@ -66,15 +67,19 @@ public class ImportAccessLog {
 
     private Access lastAccess;
 
+    @Value("")
+    int initialCapacity;
+
     public Lastupdate addLog(InputStream is, Short node){
         Instant dateUpdate = Instant.now();
         long timeStart = System.currentTimeMillis();
         lastAccess = accessRepository.getLastInNode(node);
         int countProcessed = 0;
         int countSave = 0;
+        log.info("initialCapacity:{}", initialCapacity);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            int initialCapacity = 1000;
+            //int initialCapacity = 1000;
             List<Access> listAddAccess = new ArrayList<Access>(initialCapacity);
             while ((line = reader.readLine()) != null) {
                 Access currentAccess = parsing(line, node);
