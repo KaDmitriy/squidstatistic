@@ -32,3 +32,13 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar.doFirst {
+	//version
+	File propsFile = new File("${layout.buildDirectory}/classes/java/main/ru/ntc/csir/squid/squidstatistic/config/info")
+	Properties props = new Properties()
+	props.setProperty('app.version', version)
+	props.store(propsFile.newWriter(), null)
+	props.load(propsFile.newDataInputStream())
+}
+
