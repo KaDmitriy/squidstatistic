@@ -67,9 +67,10 @@ public class ImportAccessLog {
 
     private Access lastAccess;
 
-    @Value("")
-    int initialCapacity;
+    @Value("${squidstatictic.countrowsave}")
+    Integer initialCapacity;
 
+    @Transactional
     public Lastupdate addLog(InputStream is, Short node){
         Instant dateUpdate = Instant.now();
         long timeStart = System.currentTimeMillis();
@@ -79,7 +80,6 @@ public class ImportAccessLog {
         log.info("initialCapacity:{}", initialCapacity);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             String line;
-            //int initialCapacity = 1000;
             List<Access> listAddAccess = new ArrayList<Access>(initialCapacity);
             while ((line = reader.readLine()) != null) {
                 Access currentAccess = parsing(line, node);
