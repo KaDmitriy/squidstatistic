@@ -8,7 +8,7 @@ import ru.ntc.csir.squid.squidstatistic.model.*;
 import java.util.List;
 
 @RestController
-public class Info {
+public class Information {
 
     @Autowired
     private List<Node> listNode;

@@ -20,6 +20,11 @@
     <!-- Navbar Search-->
 
     <!-- Navbar-->
+    <div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <div class="input-group">
+            <span style="color:rgba(255, 255, 255, 0.5)">v:${version}</span>
+        </div>
+    </div>
 
 </nav>
 <div id="layoutSidenav">
