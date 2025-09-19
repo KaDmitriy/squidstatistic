@@ -6,7 +6,7 @@ services:
     ports:
       - 5445:5445
     expose:
-          - "5445"
+      - 5445
     volumes:
       - squiddb_data:/var/lib/postgresql/data
       - ./db/db.sql:/docker-entrypoint-initdb.d/init.sql
